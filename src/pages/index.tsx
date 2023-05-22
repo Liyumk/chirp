@@ -46,7 +46,7 @@ const PostView = (props: PostWithUser) => {
             {` · ${dayjs(post.createdAt).fromNow()}`}
           </span>
         </div>
-        {post.content}
+        <span className="text-xl">{post.content}</span>
       </div>
     </div>
   );
