@@ -10,7 +10,13 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
 import LoadingSpinner, { LoadingPage } from "~/components/LoadingSpinner";
-import { useState } from "react";
+import {
+  type KeyboardEvent,
+  type MouseEvent,
+  useState,
+  type MouseEventHandler,
+} from "react";
+import { toast } from "react-hot-toast";
 
 dayjs.extend(relativeTime);
 
@@ -25,9 +31,24 @@ const CreatePostWizard = () => {
       setInput("");
       void ctx.posts.getAll.invalidate();
     },
+    onError: (err) => {
+      const errorMessage = err.data?.zodError?.fieldErrors.content;
+      console.log(errorMessage);
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post! Please try again later.");
+      }
+    },
   });
 
   if (!user) return null;
+
+  const onPost = (eventKeyboard?: KeyboardEvent<HTMLInputElement>) => {
+    if (eventKeyboard && eventKeyboard.key !== "Enter") return;
+    if (input.length === 0) return;
+    mutate({ content: input });
+  };
 
   return (
     <>
@@ -37,11 +58,12 @@ const CreatePostWizard = () => {
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => onPost(e)}
       />
       <button
         disabled={input.length === 0}
-        onClick={() => mutate({ content: input })}
-        className="flex h-10 w-20 items-center justify-center rounded bg-blue-500 font-bold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-400"
+        onClick={() => onPost()}
+        className="disabled:text-slate-400"
       >
         {isLoading ? <LoadingSpinner size={22} /> : "Post"}
       </button>
