@@ -9,20 +9,43 @@ import { type RouterOutputs } from "~/utils/api";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Image from "next/image";
-import { LoadingPage } from "~/components/LoadingSpinner";
+import LoadingSpinner, { LoadingPage } from "~/components/LoadingSpinner";
+import { useState } from "react";
 
 dayjs.extend(relativeTime);
 
 const CreatePostWizard = () => {
   const { user } = useUser();
-  console.log(user);
+  const [input, setInput] = useState("");
+
+  const ctx = api.useContext();
+
+  const { mutate, isLoading } = api.posts.create.useMutation({
+    onSuccess: () => {
+      setInput("");
+      void ctx.posts.getAll.invalidate();
+    },
+  });
+
   if (!user) return null;
 
   return (
-    <input
-      placeholder="Type some emojis!"
-      className="p-x-4 grow bg-transparent outline-none"
-    ></input>
+    <>
+      <input
+        placeholder="Type some emojis!"
+        className="p-x-4 grow bg-transparent outline-none"
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button
+        disabled={input.length === 0}
+        onClick={() => mutate({ content: input })}
+        className="flex h-10 w-20 items-center justify-center rounded bg-blue-500 font-bold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-blue-400"
+      >
+        {isLoading ? <LoadingSpinner size={22} /> : "Post"}
+      </button>
+    </>
   );
 };
 

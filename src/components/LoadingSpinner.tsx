@@ -1,6 +1,6 @@
 import React from "react";
 
-const LoadingSpinner = ({ size }: { size?: number }) => {
+export const LoadingSpinner = ({ size }: { size?: number }) => {
   return (
     <div role="status">
       <svg
