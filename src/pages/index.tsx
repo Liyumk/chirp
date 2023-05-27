@@ -1,14 +1,6 @@
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
-import Head from "next/head";
-import Link from "next/link";
-
 import { api } from "~/utils/api";
-import { type RouterOutputs } from "~/utils/api";
-
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-import Image from "next/image";
 import LoadingSpinner, { LoadingPage } from "~/components/LoadingSpinner";
 import {
   type KeyboardEvent,
@@ -18,8 +10,7 @@ import {
 } from "react";
 import { toast } from "react-hot-toast";
 import { PageLayout } from "~/components/Layout";
-
-dayjs.extend(relativeTime);
+import { PostView } from "~/components/PostView";
 
 const CreatePostWizard = () => {
   const { user } = useUser();
@@ -69,34 +60,6 @@ const CreatePostWizard = () => {
         {isLoading ? <LoadingSpinner size={22} /> : "Post"}
       </button>
     </>
-  );
-};
-
-type PostWithUser = RouterOutputs["posts"]["getAll"][number];
-const PostView = (props: PostWithUser) => {
-  const { post, author } = props;
-  return (
-    <div key={post.id} className="flex gap-3 border-b border-slate-400 p-4">
-      <Image
-        src={author.profileImageUrl}
-        alt={`@${author.username}'s profile picture`}
-        className="h-10 w-10 rounded-full"
-        width={56}
-        height={56}
-      />
-      <div className="flex flex-col">
-        <div className="flex gap-2 text-slate-300">
-          <Link href={`/@${author.username}`}>
-            <span>{`@${author.username}`}</span>
-          </Link>
-          <span className="font-thin">
-            {" "}
-            {` · ${dayjs(post.createdAt).fromNow()}`}
-          </span>
-        </div>
-        <span className="text-xl">{post.content}</span>
-      </div>
-    </div>
   );
 };
 
