@@ -3,7 +3,7 @@ import { type NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { PageLayout } from "~/components/Layout";
-import LoadingSpinner from "~/components/LoadingSpinner";
+import LoadingSpinner, { LoadingPage } from "~/components/LoadingSpinner";
 import { PostView } from "~/components/PostView";
 
 import { api } from "~/utils/api";
@@ -20,13 +20,7 @@ const SinglePostPage: NextPage = () => {
     api.profile.getUserByUsername.useQuery({ username: user?.username ?? "" });
 
   if (isPostLoading || isAuthorLoading) {
-    return (
-      <PageLayout>
-        <div className="flex h-full items-center justify-center">
-          <LoadingSpinner />
-        </div>
-      </PageLayout>
-    );
+    return <LoadingPage />;
   }
 
   if (!post || !author) {

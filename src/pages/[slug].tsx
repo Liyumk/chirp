@@ -34,13 +34,21 @@ const ProfileFeed = (props: { userId: string }) => {
 };
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
-  const { data, isLoading } = api.profile.getUserByUsername.useQuery({
-    username,
-  });
+  const { data, isLoading } = api.profile.getUserByUsername.useQuery(
+    {
+      username,
+    },
+    { refetchOnWindowFocus: false }
+  );
 
   if (isLoading) return <LoadingPage />;
 
-  if (!data) return <div>Not found</div>;
+  if (!data)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        User not found
+      </div>
+    );
 
   return (
     <>
